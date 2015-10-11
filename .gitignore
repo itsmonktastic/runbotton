@@ -1,0 +1,4 @@
+*.pyc
+/runbotton-env/
+/lib
+*.swp
