@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en" ng-app="botConfigApp">
+<head>
+  <meta charset="utf-8">
+  <title>Bot Configuration</title>
+  <script src="static/angular.js"></script>
+  <script>
+    var botConfigApp = angular.module('botConfigApp', []);
+
+    botConfigApp.controller('BotConfigCtrl', function ($scope, $http, $httpParamSerializerJQLike) {
+        $scope.messages = [
+        ];
+
+        $scope.submitInput = function () {
+          $scope.messages.push({userName: 'you', text: $scope.textInput});
+          var data = $httpParamSerializerJQLike({trigger_word: '', text: $scope.textInput, user_name: 'you'});
+          var config = {headers: {'Content-Type': 'application/x-www-form-urlencoded'}};
+
+          $http.post('bot', data, config).success(function (data) {
+            var text = data.text || '<no response>';
+            $scope.messages.push({userName: 'bot', text: text});
+            $scope.textInput = '';
+          })
+        };
+    });
+  </script>
+</head>
+<body ng-controller="BotConfigCtrl">
+  <p>Nothing here {{'yet' + '!'}}</p>
+  <input type="text" ng-model="textInput">
+  <button ng-click="submitInput()">Submit</button>
+  <ul>
+    <li ng-repeat="m in messages">
+    {{m.userName}} | {{m.text}}
+    </li>
+  </ul>
+</body>
+</html>

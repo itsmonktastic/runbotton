@@ -9,20 +9,17 @@ app.config['DEBUG'] = True
 # Note: We don't need to call run() since our application is embedded within
 # the App Engine WSGI application server.
 
-
 @app.route('/')
 def hello():
-    """Return a friendly HTTP greeting."""
-    return 'Hello World!'
-
-bot_name = 'runbotton'
+    return app.send_static_file('index.html')
 
 class Fact(ndb.Model):
   value = ndb.StringProperty()
 
 @app.route('/bot', methods=['POST'])
 @ndb.transactional
-def bot():
+def bot_old():
+    print request.form
     user_name = request.form['user_name']
     if user_name == '19letterslong':
         return jsonify(text='Kiss off, twit!')
