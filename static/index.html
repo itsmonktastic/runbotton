@@ -8,25 +8,59 @@
     var botConfigApp = angular.module('botConfigApp', []);
 
     botConfigApp.controller('BotConfigCtrl', function ($scope, $http, $httpParamSerializerJQLike) {
-        $scope.messages = [
-        ];
+        $scope.messages = [];
+        $scope.rules = [];
+
+        $http.get('rules').success(function (data) {
+          $scope.rules = data;
+        });
+
+        $scope.addRule = function () {
+          post('rules').success(function (data) {
+            $scope.rules.push(data);
+          });
+        };
+
+        $scope.save = function (r) {
+            console.log(r);
+            post('rules/'+r.id, r);
+        };
+
+        function post(url, data) {
+          var data = $httpParamSerializerJQLike(data);
+          var config = {headers: {'Content-Type': 'application/x-www-form-urlencoded'}};
+          return $http.post(url, data, config);
+        }
 
         $scope.submitInput = function () {
           $scope.messages.push({userName: 'you', text: $scope.textInput});
-          var data = $httpParamSerializerJQLike({trigger_word: '', text: $scope.textInput, user_name: 'you'});
-          var config = {headers: {'Content-Type': 'application/x-www-form-urlencoded'}};
-
-          $http.post('bot', data, config).success(function (data) {
+          var data = {trigger_word: '', text: $scope.textInput, user_name: 'you'};
+          post('bot', data).success(function (data) {
             var text = data.text || '<no response>';
             $scope.messages.push({userName: 'bot', text: text});
             $scope.textInput = '';
-          })
+          });
         };
+
+        //var timeout = null;
+        //var debounceSaveUpdates = function(newVal, oldVal) {
+        //  if (newVal != oldVal) {
+        //    if (timeout) {
+        //      $timeout.cancel(timeout)
+        //    }
+        //    timeout = $timeout(saveUpdates, 1000);  // 1000 = 1 second
+        //  }
+        //};
     });
   </script>
 </head>
 <body ng-controller="BotConfigCtrl">
-  <p>Nothing here {{'yet' + '!'}}</p>
+  <div>
+    <div ng-repeat="r in rules">
+      When <input type="text" ng-model="r.triggerCode" ng-blur="save(r)"> then <input type="text" ng-model="r.actionCode" ng-blur="save(r)">
+    </div>
+    <button ng-click="addRule()">Add Rule</button>
+  </div>
   <input type="text" ng-model="textInput">
   <button ng-click="submitInput()">Submit</button>
   <ul>

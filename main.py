@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 import re
+import json
 from google.appengine.ext import ndb
 
 
@@ -65,3 +66,26 @@ def bot_old():
 def page_not_found(e):
     """Return a custom 404 error."""
     return 'Sorry, nothing at this URL.', 404
+
+class Rule(ndb.Model):
+  trigger_code = ndb.StringProperty()
+  action_code = ndb.StringProperty()
+
+def rule_code_dict(rule):
+  return {'id': rule.key.integer_id(), 'triggerCode': rule.trigger_code, 'actionCode': rule.action_code}
+
+@app.route('/rules', methods=['GET', 'POST'])
+def rules():
+    if request.method == 'POST':
+        r = Rule(trigger_code='', action_code='')
+        r.put()
+        return json.dumps(rule_code_dict(r))
+    return json.dumps([rule_code_dict(r) for r in Rule.query().iter()])
+
+@app.route('/rules/<int:rule_id>', methods=['POST'])
+def rule(rule_id):
+    r = Rule.get_by_id(rule_id)
+    r.populate(trigger_code=request.form['triggerCode'], action_code=request.form['actionCode'])
+    r.put()
+    return json.dumps(rule_code_dict(r))
+
