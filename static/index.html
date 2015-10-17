@@ -34,11 +34,10 @@
 
         $scope.submitInput = function () {
           $scope.messages.push({userName: 'you', text: $scope.textInput});
-          var data = {trigger_word: '', text: $scope.textInput, user_name: 'you'};
+          var data = {trigger_word: '', text: $scope.textInput, user_name: 'you', __test: true};
           post('bot', data).success(function (data) {
             var text = data.text || '<no response>';
             $scope.messages.push({userName: 'bot', text: text});
-            $scope.textInput = '';
           });
         };
     });
@@ -46,6 +45,8 @@
 </head>
 <body ng-controller="BotConfigCtrl">
   <div>
+    <h1>Define rules</h1>
+    <div>Please note there are some hardcoded rules which take priority.</div>
     <div ng-repeat="r in rules">
       When <input type="text" ng-model="r.triggerCode" ng-blur="save(r)"> then <input type="text" ng-model="r.actionCode" ng-blur="save(r)">
     </div>
@@ -53,6 +54,7 @@
   </div>
   <hr>
   <div>
+    <h1>Test rules</h1>
     <input type="text" ng-model="textInput">
     <button ng-click="submitInput()">Submit test chat</button>
     <ul>
