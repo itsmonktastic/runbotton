@@ -41,16 +41,6 @@
             $scope.textInput = '';
           });
         };
-
-        //var timeout = null;
-        //var debounceSaveUpdates = function(newVal, oldVal) {
-        //  if (newVal != oldVal) {
-        //    if (timeout) {
-        //      $timeout.cancel(timeout)
-        //    }
-        //    timeout = $timeout(saveUpdates, 1000);  // 1000 = 1 second
-        //  }
-        //};
     });
   </script>
 </head>
@@ -61,12 +51,15 @@
     </div>
     <button ng-click="addRule()">Add Rule</button>
   </div>
-  <input type="text" ng-model="textInput">
-  <button ng-click="submitInput()">Submit</button>
-  <ul>
-    <li ng-repeat="m in messages">
-    {{m.userName}} | {{m.text}}
-    </li>
-  </ul>
+  <hr>
+  <div>
+    <input type="text" ng-model="textInput">
+    <button ng-click="submitInput()">Submit test chat</button>
+    <ul>
+      <li ng-repeat="m in messages">
+      {{m.userName}} | {{m.text}}
+      </li>
+    </ul>
+  </div>
 </body>
 </html>
